@@ -96,6 +96,22 @@ type markdown struct {
 	extensions []Extender
 }
 
+// NewWith returns a new Markdown with given options.
+func NewWith(parser parser.Parser, renderer renderer.Renderer, options ...Option) Markdown {
+	md := &markdown{
+		parser:     parser,
+		renderer:   renderer,
+		extensions: []Extender{},
+	}
+	for _, opt := range options {
+		opt(md)
+	}
+	for _, e := range md.extensions {
+		e.Extend(md)
+	}
+	return md
+}
+
 // New returns a new Markdown with given options.
 func New(options ...Option) Markdown {
 	md := &markdown{
